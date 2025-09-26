@@ -4,7 +4,7 @@ from datetime import date
 import requests
 import pandas as pd
 from sklearn.ensemble import RandomForestClassifier
-from sklearn.metrics import accuracy_score, precision_score
+from sklearn.metrics import accuracy_score
 from sklearn.metrics import classification_report
 from teamNameMapping import nameMapping
 from dotenv import load_dotenv
@@ -59,10 +59,10 @@ except Exception as e:
 
 
 #Keys for myself
-print(data.keys())
-print(data["matches"][0].keys())
-print(data['matches'][0]["homeTeam"].keys())
-print(data['matches'][0]["score"]["fullTime"].keys())
+#print(data.keys())
+#print(data["matches"][0].keys())
+#print(data['matches'][0]["homeTeam"].keys())
+#print(data['matches'][0]["score"]["fullTime"].keys())
 
 #Organaize the winners
 matches = []
@@ -168,32 +168,65 @@ fullDf["awayWinRateExpanding"] = fullDf.groupby(["season", "awayTeam"])["target"
 #Adding points
 fullDf["homePoints"] = fullDf["target"].map({0:1, 1:3, 2:0})
 fullDf["awayPoints"] = fullDf["target"].map({0:1, 1:0, 2:3})
-home = fullDf[["date","season", "homeTeam", "homePoints"]].rename(columns={"homeTeam":"team", "homePoints":"points"})
-away = fullDf[["date","season", "awayTeam", "awayPoints"]].rename(columns={"awayTeam":"team", "awayPoints":"points"})
-total = pd.concat([home, away], ignore_index=True)
-total = total.sort_values("date").reset_index(drop=True)
-total["totalPoints"] = total.groupby(["team","season"])["points"].apply(lambda x: x.cumsum().shift(fill_value=0)).reset_index(level=[0,1], drop=True)
+homeP = fullDf[["date","season", "homeTeam", "homePoints"]].rename(columns={"homeTeam":"team", "homePoints":"points"})
+awayP = fullDf[["date","season", "awayTeam", "awayPoints"]].rename(columns={"awayTeam":"team", "awayPoints":"points"})
+totalP = pd.concat([homeP, awayP], ignore_index=True)
+totalP = totalP.sort_values("date").reset_index(drop=True)
+totalP["totalPoints"] = totalP.groupby(["team","season"])["points"].apply(lambda x: x.cumsum().shift(fill_value=0)).reset_index(level=[0,1], drop=True)
 
-fullDf = fullDf.merge(total[["date", "team","totalPoints"]].rename(columns={"team":"homeTeam", "totalPoints":"homeTotalPoints"}),
+fullDf = fullDf.merge(totalP[["date", "team","totalPoints"]].rename(columns={"team":"homeTeam", "totalPoints":"homeTotalPoints"}),
                       on=["date", "homeTeam"],
                       how = "left")
-fullDf = fullDf.merge(total[["date", "team","totalPoints"]].rename(columns={"team":"awayTeam", "totalPoints":"awayTotalPoints"}),
+fullDf = fullDf.merge(totalP[["date", "team","totalPoints"]].rename(columns={"team":"awayTeam", "totalPoints":"awayTotalPoints"}),
                       on=["date", "awayTeam"],
                       how = "left")
 
+#Goals for/against per game
+homeGoals = fullDf[["date", "season", "homeTeam", "homeScore", "awayScore"]].rename(columns={"homeTeam":"team", "homeScore":"goalsFor", "awayScore":"goalsAgainst"})
+awayGoals = fullDf[["date", "season", "awayTeam", "homeScore", "awayScore"]].rename(columns={"awayTeam":"team", "homeScore":"goalsAgainst", "awayScore":"goalsFor"})
+totalGoals = pd.concat([homeGoals, awayGoals], ignore_index=True)
+totalGoals = totalGoals.sort_values("date").reset_index(drop=True)
+totalGoals["avgGoalsFor"] = totalGoals.groupby(["team", "season"])["goalsFor"].apply(lambda x: x.expanding().mean().shift(fill_value=0)).reset_index(level=[0,1], drop=True)
+totalGoals["avgGoalsAgainst"] = totalGoals.groupby(["team", "season"])["goalsAgainst"].apply(lambda x: x.expanding().mean().shift(fill_value=0)).reset_index(level=[0,1], drop=True)
+
+fullDf = fullDf.merge(totalGoals[["date", "team", "avgGoalsFor", "avgGoalsAgainst"]].rename(columns={"team":"homeTeam", "avgGoalsFor":"homeAvgGoalsFor", "avgGoalsAgainst":"homeAvgGoalsAgainst"}),
+                      on=["date", "homeTeam"],
+                      how = "left")
+fullDf = fullDf.merge(totalGoals[["date", "team", "avgGoalsFor", "avgGoalsAgainst"]].rename(columns={"team":"awayTeam", "avgGoalsFor":"awayAvgGoalsFor", "avgGoalsAgainst":"awayAvgGoalsAgainst"}),
+                      on=["date", "awayTeam"],
+                      how = "left")
+
+#Win/Loss/Draw count
+homecount = fullDf[["date", "season", "homeTeam", "target"]].rename(columns={"homeTeam":"team"})
+awaycount = fullDf[["date", "season", "awayTeam", "target"]].rename(columns={"awayTeam":"team"})
+awaycount["target"] = awaycount["target"].map({0:0, 1:2, 2:1})
+totalWLD = pd.concat([homecount, awaycount], ignore_index=True)
+totalWLD = totalWLD.sort_values("date").reset_index(drop=True)
+totalWLD["totalWins"] = totalWLD.groupby(["team","season"])["target"].apply(lambda x: (x==1).cumsum().shift(fill_value=0)).reset_index(level=[0,1], drop=True)
+totalWLD["totalLosses"] = totalWLD.groupby(["team","season"])["target"].apply(lambda x: (x==2).cumsum().shift(fill_value=0)).reset_index(level=[0,1], drop=True)
+totalWLD["totalDraws"] = totalWLD.groupby(["team","season"])["target"].apply(lambda x: (x==0).cumsum().shift(fill_value=0)).reset_index(level=[0,1], drop=True)
+
+fullDf = fullDf.merge(totalWLD[["date", "team", "totalWins", "totalLosses", "totalDraws"]].rename(columns={"team":"homeTeam", "totalWins":"homeTotalWins", "totalLosses":"homeTotalLosses", "totalDraws":"homeTotalDraws"}),
+                      on=["date", "homeTeam"],
+                      how = "left")
+fullDf = fullDf.merge(totalWLD[["date", "team", "totalWins", "totalLosses", "totalDraws"]].rename(columns={"team":"awayTeam", "totalWins":"awayTotalWins", "totalLosses":"awayTotalLosses", "totalDraws":"awayTotalDraws"}),
+                      on=["date", "awayTeam"],
+                      how = "left")
 
 #Make test CSV
 fullDf.to_csv("test.csv", index=False)
 
 #Training
-weights = {0:2, 1:1, 2:2} # Draw and Loss gets weight 2, Win 1
+weights = {0:2.1, 1:1, 2:2} # Draw gets 2.1, homeWin gets 1, awayWin gets 2
 rf = RandomForestClassifier(n_estimators = 400, min_samples_split = 10, random_state = 1,  class_weight=weights)
 train = fullDf[fullDf["date"] < '2025-02-01']
 test = fullDf[fullDf["date"] >= '2025-02-01']
 predictors = ["homeCode", "awayCode", "dayCode", "homeGoalsForSum", "homeGoalsAgainstSum",
               "awayGoalsForSum", "awayGoalsAgainstSum", "homeWinRateRolling3", "awayWinRateRolling3",
               "homeWinRateRolling5", "awayWinRateRolling5", "homeWinRateExpanding", "awayWinRateExpanding",
-              "homeTotalPoints", "awayTotalPoints"]
+              "homeTotalPoints", "awayTotalPoints", "homeAvgGoalsFor", "homeAvgGoalsAgainst",
+              "awayAvgGoalsFor", "awayAvgGoalsAgainst","homeTotalWins", "homeTotalLosses", "homeTotalDraws",
+              "awayTotalWins", "awayTotalLosses", "awayTotalDraws"]
 rf.fit(train[predictors], train["target"])
 preds = rf.predict(test[predictors])
 
