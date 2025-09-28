@@ -9,6 +9,7 @@ from sklearn.metrics import classification_report
 from teamNameMapping import nameMapping
 from dotenv import load_dotenv
 from pathlib import Path
+import joblib
 
 #Delete old files so there's no duplicates
 filesToRemove = ["laliga_all_seasons.csv", "laliga_all_seasons_plus_api.csv",
@@ -110,8 +111,6 @@ print("Data saved to matches.csv, completedMatches.csv, futureMatches.csv")
 
 #Merge the CVS from old seasons with the API data from current season
 fullDf = pd.concat([historical_df, completedMatches], ignore_index=True)
-fullDf.to_csv("laliga_all_seasons_plus_api.csv", index=False)
-print("All seasons + API data saved to laliga_all_seasons_plus_api.csv")
 
 fullDf["date"] = pd.to_datetime(fullDf["date"], dayfirst = True)
 
@@ -121,7 +120,7 @@ team_mapping = {team: i for i, team in enumerate(teams)}
 fullDf["homeCode"] = fullDf["homeTeam"].map(team_mapping)
 fullDf["awayCode"] = fullDf["awayTeam"].map(team_mapping)
 
-#Add day_code column
+#Add dayCode column
 fullDf["dayCode"] = fullDf["date"].dt.dayofweek
 
 #Add result column
@@ -213,8 +212,8 @@ fullDf = fullDf.merge(totalWLD[["date", "team", "totalWins", "totalLosses", "tot
                       on=["date", "awayTeam"],
                       how = "left")
 
-#Make test CSV
-fullDf.to_csv("test.csv", index=False)
+fullDf.to_csv("laliga_all_seasons_plus_api.csv", index=False)
+print("All seasons + API data saved to laliga_all_seasons_plus_api.csv")
 
 #Training
 weights = {0:2.1, 1:1, 2:2} # Draw gets 2.1, homeWin gets 1, awayWin gets 2
@@ -228,6 +227,12 @@ predictors = ["homeCode", "awayCode", "dayCode", "homeGoalsForSum", "homeGoalsAg
               "awayAvgGoalsFor", "awayAvgGoalsAgainst","homeTotalWins", "homeTotalLosses", "homeTotalDraws",
               "awayTotalWins", "awayTotalLosses", "awayTotalDraws"]
 rf.fit(train[predictors], train["target"])
+
+
+joblib.dump(rf, "random_forest.pkl")
+print("Model saved to random_forest.pkl")
+
+
 preds = rf.predict(test[predictors])
 
 #Test
@@ -243,5 +248,7 @@ report = classification_report(
 	target_names = ["D", "H", "A"]
 )
 print(report)
+
+
 
 

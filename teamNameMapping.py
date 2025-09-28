@@ -1,4 +1,5 @@
 import requests
+from enum import Enum
 
 #Get updated data from API
 url = "https://api.football-data.org/v4/competitions/PD/matches"
@@ -47,3 +48,10 @@ nameMapping = {
 	"Valladolid": "Valladolid",
 	"Villarreal" : "Villarreal",
 }
+
+def createTeamEnum(nameMap: dict):
+	uniqueNames = sorted(set(nameMap.values()))
+	enumDict = {name.replace(" ", "_"): name for name in uniqueNames}
+	return Enum("teamsEnum", enumDict)
+
+teamsEnum = createTeamEnum(nameMapping)
