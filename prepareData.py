@@ -3,13 +3,9 @@ import glob
 from datetime import date
 import requests
 import pandas as pd
-from sklearn.ensemble import RandomForestClassifier
-from sklearn.metrics import accuracy_score
-from sklearn.metrics import classification_report
 from teamNameMapping import nameMapping
 from dotenv import load_dotenv
 from pathlib import Path
-import joblib
 
 #Delete old files so there's no duplicates
 filesToRemove = ["laliga_all_seasons.csv", "laliga_all_seasons_plus_api.csv",
@@ -214,41 +210,3 @@ fullDf = fullDf.merge(totalWLD[["date", "team", "totalWins", "totalLosses", "tot
 
 fullDf.to_csv("laliga_all_seasons_plus_api.csv", index=False)
 print("All seasons + API data saved to laliga_all_seasons_plus_api.csv")
-
-#Training
-weights = {0:2.1, 1:1, 2:2} # Draw gets 2.1, homeWin gets 1, awayWin gets 2
-rf = RandomForestClassifier(n_estimators = 400, min_samples_split = 10, random_state = 1,  class_weight=weights)
-train = fullDf[fullDf["date"] < '2025-02-01']
-test = fullDf[fullDf["date"] >= '2025-02-01']
-predictors = ["homeCode", "awayCode", "dayCode", "homeGoalsForSum", "homeGoalsAgainstSum",
-              "awayGoalsForSum", "awayGoalsAgainstSum", "homeWinRateRolling3", "awayWinRateRolling3",
-              "homeWinRateRolling5", "awayWinRateRolling5", "homeWinRateExpanding", "awayWinRateExpanding",
-              "homeTotalPoints", "awayTotalPoints", "homeAvgGoalsFor", "homeAvgGoalsAgainst",
-              "awayAvgGoalsFor", "awayAvgGoalsAgainst","homeTotalWins", "homeTotalLosses", "homeTotalDraws",
-              "awayTotalWins", "awayTotalLosses", "awayTotalDraws"]
-rf.fit(train[predictors], train["target"])
-
-
-joblib.dump(rf, "random_forest.pkl")
-print("Model saved to random_forest.pkl")
-
-
-preds = rf.predict(test[predictors])
-
-#Test
-acc = accuracy_score(test["target"], preds)
-print(acc)
-combined = pd.DataFrame(dict(actual=test["target"], predicted=preds))
-table = pd.crosstab(index=combined["actual"], columns=combined["predicted"])
-print(table)
-
-report = classification_report(
-	test["target"],
-	preds,
-	target_names = ["D", "H", "A"]
-)
-print(report)
-
-
-
-

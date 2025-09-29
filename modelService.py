@@ -2,7 +2,7 @@ import joblib
 import pandas as pd
 
 class MatchPredictor:
-	def __init__(self, modelPath="random_forest.pkl", fullDfPath="laliga_all_seasons_plus_api.csv"):
+	def __init__(self, modelPath="best_model.pkl", fullDfPath="laliga_all_seasons_plus_api.csv"):
 		self.model = joblib.load(modelPath)
 		self.fullDf = pd.read_csv(fullDfPath, parse_dates=["date"])
 
