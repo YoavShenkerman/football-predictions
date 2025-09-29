@@ -33,7 +33,7 @@ def formatPrediction(target, homeTeam, awayTeam):
 def predictMatch(data: MatchData):
 	key = makeCacheKey({
 		"homeTeam": data.homeTeam.value,
-		"awayTeam": data.homeTeam.value,
+		"awayTeam": data.awayTeam.value,
 		"date": str(data.date)
 	})
 	cached = r.get(key)
