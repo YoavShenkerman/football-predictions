@@ -1,8 +1,21 @@
+import os
 import joblib
 import pandas as pd
 
 class MatchPredictor:
-	def __init__(self, modelPath="best_model.pkl", fullDfPath="laliga_all_seasons_plus_api.csv"):
+	def __init__(self, modelPath=None, fullDfPath=None):
+		currentDir = os.path.dirname(__file__)
+
+		if modelPath is None:
+			modelPath = os.path.join(currentDir, "..", "models", "best_model.pkl")
+		if fullDfPath is None:
+			fullDfPath = os.path.join(currentDir, "..", "data", "laliga_all_seasons_plus_api.csv")
+
+		if not os.path.exists(modelPath):
+			raise FileNotFoundError(f"Model file {modelPath} not found")
+		if not os.path.exists(fullDfPath):
+			raise FileNotFoundError(f"Full DF file {fullDfPath} not found")
+
 		self.model = joblib.load(modelPath)
 		self.fullDf = pd.read_csv(fullDfPath, parse_dates=["date"])
 
