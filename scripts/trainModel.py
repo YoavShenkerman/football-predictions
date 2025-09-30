@@ -1,13 +1,59 @@
 import pandas as pd
-from datetime import date
 from sklearn.ensemble import RandomForestClassifier, GradientBoostingClassifier
 from sklearn.linear_model import LogisticRegression
 from sklearn.metrics import accuracy_score
 from sklearn.model_selection import RandomizedSearchCV
 import joblib
+from sqlalchemy import create_engine, inspect
+from sqlalchemy.orm import sessionmaker
+from datetime import date
 
-fullDfPath="laliga_all_seasons_plus_api.csv"
-fullDf = pd.read_csv(fullDfPath)
+dbPath = r"C:\Users\yoavs\Desktop\אוניברסיטת תל אביב\פרוייקטים\פרוייקטים אישיים\football-predictions\database\football.db"
+engine = create_engine("sqlite:///" + dbPath)
+Session = sessionmaker(bind=engine)
+session = Session()
+
+inspector = inspect(engine)
+
+query = """
+                SELECT m.date, \
+                       ht.name AS homeTeam, \
+                       at.name AS awayTeam, \
+                       m.homeScore, \
+                       m.awayScore, \
+                       m.target, \
+                       m.homeCode, \
+                       m.awayCode, \
+                       m.dayCode, \
+                       m.homeGoalsForSum, \
+                       m.homeGoalsAgainstSum, \
+                       m.awayGoalsForSum, \
+                       m.awayGoalsAgainstSum, \
+                       m.homeWinRateRolling3, \
+                       m.awayWinRateRolling3, \
+                       m.homeWinRateRolling5, \
+                       m.awayWinRateRolling5, \
+                       m.homeWinRateExpanding, \
+                       m.awayWinRateExpanding, \
+                       m.homeTotalPoints, \
+                       m.awayTotalPoints, \
+                       m.homeAvgGoalsFor, \
+                       m.homeAvgGoalsAgainst, \
+                       m.awayAvgGoalsFor, \
+                       m.awayAvgGoalsAgainst, \
+                       m.homeTotalWins, \
+                       m.homeTotalLosses, \
+                       m.homeTotalDraws, \
+                       m.awayTotalWins, \
+                       m.awayTotalLosses, \
+                       m.awayTotalDraws
+                FROM matches m
+                         JOIN teams ht ON m.homeTeamId = ht.id
+                         JOIN teams at \
+                ON m.awayTeamId = at.id \
+		        """
+
+fullDf = pd.read_sql(query, engine)
 
 evalDate = "2025-02-01"
 train = fullDf[fullDf["date"] < evalDate]
