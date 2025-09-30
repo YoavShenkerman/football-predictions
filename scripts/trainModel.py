@@ -4,7 +4,7 @@ from sklearn.linear_model import LogisticRegression
 from sklearn.metrics import accuracy_score
 from sklearn.model_selection import RandomizedSearchCV
 import joblib
-from sqlalchemy import create_engine, inspect
+from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 from datetime import date
 
@@ -12,8 +12,6 @@ dbPath = r"C:\Users\yoavs\Desktop\אוניברסיטת תל אביב\פרויי�
 engine = create_engine("sqlite:///" + dbPath)
 Session = sessionmaker(bind=engine)
 session = Session()
-
-inspector = inspect(engine)
 
 query = """
                 SELECT m.date, \
