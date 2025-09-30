@@ -80,7 +80,7 @@ xFinal, yFinal = finalDf = fullDf[predictors], fullDf["target"]
 
 bestModel.fit(xFinal, yFinal)
 
-joblib.dump(bestModel, "best_model.pkl")
+joblib.dump(bestModel, "../models/best_model.pkl")
 print("Model saved to best_model.pkl")
 
 

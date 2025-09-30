@@ -1,8 +1,8 @@
 from fastapi import FastAPI
 from pydantic import BaseModel
-from modelService import MatchPredictor
+from services.modelService import MatchPredictor
 from datetime import date
-from teamNameMapping import teamsEnum
+from utils.teamNameMapping import teamsEnum
 import redis
 import json
 from hashlib import sha256

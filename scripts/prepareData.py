@@ -3,7 +3,7 @@ import glob
 from datetime import date
 import requests
 import pandas as pd
-from teamNameMapping import nameMapping
+from utils.teamNameMapping import nameMapping
 from dotenv import load_dotenv
 from pathlib import Path
 
@@ -39,7 +39,7 @@ merged_df.to_csv("laliga_all_seasons.csv", index=False)
 print("All season merged and saved to laliga_all_seasons.csv")
 
 #Load APIToken.env
-load_dotenv("APIToken.env")
+load_dotenv("../config/APIToken.env")
 APIToken = os.getenv("API_TOKEN")
 
 #Get updated data from API
@@ -88,7 +88,7 @@ for match in data["matches"]:
 api_df = pd.DataFrame(matches)
 
 #Edit names and dates
-historical_df = pd.read_csv("laliga_all_seasons.csv")
+historical_df = pd.read_csv("../data/laliga_all_seasons.csv")
 historical_df["homeTeam"] = historical_df["homeTeam"].replace(nameMapping)
 historical_df["awayTeam"] = historical_df["awayTeam"].replace(nameMapping)
 historical_df["date"] = pd.to_datetime(historical_df["date"], dayfirst=True, errors="coerce").dt.date
