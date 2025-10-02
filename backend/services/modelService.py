@@ -74,13 +74,13 @@ class MatchPredictor:
 		"""
 		:param data: {"homeTeam": str, "awayTeam": str, "date": "YYYY-MM-DD"}
 		"""
-		homeCode = self.teamCodeMap[data["homeTeam"].value]
-		awayCode = self.teamCodeMap[data["awayTeam"].value]
+		homeCode = self.teamCodeMap[data["homeTeam"]]
+		awayCode = self.teamCodeMap[data["awayTeam"]]
 		matchDate = pd.to_datetime(data["date"], dayfirst=True)
 		dayCode = matchDate.dayofweek
 
-		lastHome = self.fullDf[self.fullDf["homeTeam"] == data["homeTeam"].value].sort_values("date").iloc[-1]
-		lastAway = self.fullDf[self.fullDf["awayTeam"] == data["awayTeam"].value].sort_values("date").iloc[-1]
+		lastHome = self.fullDf[self.fullDf["homeTeam"] == data["homeTeam"]].sort_values("date").iloc[-1]
+		lastAway = self.fullDf[self.fullDf["awayTeam"] == data["awayTeam"]].sort_values("date").iloc[-1]
 
 		row = {
 			"homeCode": homeCode,

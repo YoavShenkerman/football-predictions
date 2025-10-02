@@ -12,8 +12,8 @@ r = redis.Redis(host='localhost', port=6379, db=0)
 predictor = MatchPredictor()
 
 class MatchData(BaseModel):
-	homeTeam: teamsEnum
-	awayTeam: teamsEnum
+	homeTeam: str
+	awayTeam: str
 	date: date
 
 def makeCacheKey(data: dict):
@@ -31,8 +31,8 @@ def formatPrediction(target, homeTeam, awayTeam):
 @router.post("/predict")
 def predictMatch(data: MatchData):
 	key = makeCacheKey({
-		"homeTeam": data.homeTeam.value,
-		"awayTeam": data.awayTeam.value,
+		"homeTeam": data.homeTeam,
+		"awayTeam": data.awayTeam,
 		"date": str(data.date)
 	})
 	cached = r.get(key)
@@ -40,7 +40,7 @@ def predictMatch(data: MatchData):
 		return {"prediction": cached.decode("utf-8")}
 
 	x = predictor.predict(data.model_dump())
-	prediction = formatPrediction(x, data.homeTeam.value, data.awayTeam.value)
+	prediction = formatPrediction(x, data.homeTeam, data.awayTeam)
 
 	r.setex(key, 86400, prediction)
 
