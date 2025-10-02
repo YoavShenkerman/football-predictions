@@ -1,0 +1,28 @@
+# Python backend
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+*.env
+*.venv
+*.egg
+*.egg-info/
+dist/
+build/
+pip-wheel-metadata/
+backend/config/
+identifier.sqlite
+
+# IDE
+.idea/
+*.iml
+
+# CSV / Data files
+*.csv
+
+# Frontend React/Vite
+frontend/node_modules/
+frontend/dist/
+frontend/build/
+frontend/.env
+frontend/.DS_Store
