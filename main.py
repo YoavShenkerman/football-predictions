@@ -1,5 +1,5 @@
 from fastapi import FastAPI
-from routes import predictions
+from backend.routes import predictions
 
 app = FastAPI()
 
