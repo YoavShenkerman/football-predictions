@@ -8,7 +8,7 @@ from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 from datetime import date
 
-dbPath = r"C:\Users\yoavs\Desktop\אוניברסיטת תל אביב\פרוייקטים\פרוייקטים אישיים\football-predictions\database\football.db"
+dbPath = r"C:\Users\yoavs\Desktop\אוניברסיטת תל אביב\פרוייקטים\פרוייקטים אישיים\football-predictions\backend\database\football.db"
 engine = create_engine("sqlite:///" + dbPath)
 Session = sessionmaker(bind=engine)
 session = Session()

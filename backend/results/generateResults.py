@@ -12,7 +12,7 @@ modelPath = os.path.join(currentDir, "..", "models", "best_model.pkl")
 modelPath = os.path.abspath(modelPath)
 model = joblib.load(modelPath)
 
-dbPath = r"C:\Users\yoavs\Desktop\אוניברסיטת תל אביב\פרוייקטים\פרוייקטים אישיים\football-predictions\database\football.db"
+dbPath = r"C:\Users\yoavs\Desktop\אוניברסיטת תל אביב\פרוייקטים\פרוייקטים אישיים\football-predictions\backend\database\football.db"
 engine = create_engine("sqlite:///" + dbPath)
 Session = sessionmaker(bind=engine)
 session = Session()
