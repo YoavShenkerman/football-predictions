@@ -1,8 +1,28 @@
-# Default ignored files
-/shelf/
-/workspace.xml
-# Editor-based HTTP Client requests
-/httpRequests/
-# Datasource local storage ignored files
-/dataSources/
-/dataSources.local.xml
+# created by virtualenv automatically
+*
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+*.env
+*.venv
+*.egg
+*.egg-info/
+dist/
+build/
+pip-wheel-metadata/
+
+# PyCharm
+.idea/
+*.iml
+
+# CSV / Data files
+*.csv
+
+# Frontend React/Vite
+frontend/node_modules/
+frontend/dist/
+frontend/build/
+frontend/.env
+frontend/.DS_Store
