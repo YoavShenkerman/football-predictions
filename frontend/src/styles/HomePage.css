@@ -1,0 +1,89 @@
+body {
+    background-color: #2e7d32;
+    background-image: repeating-linear-gradient(
+            90deg,
+            #2e7d32,
+            #2e7d32 80px,
+            #388e3c 80px,
+            #388e3c 160px
+    );
+    font-family: 'Arial', sans-serif;
+    margin: 0;
+    padding: 0;
+}
+
+.homepage-container {
+    max-width: 900px;
+    margin: 2rem auto;
+    padding: 2rem;
+    background-color: rgba(255,255,255,0.95);
+    border-radius: 15px;
+    text-align: center;
+    box-shadow: 0 6px 20px rgba(0,0,0,0.3);
+    border: 2px solid #fff;
+}
+
+.laliga-logo {
+    width: 120px;
+    margin-bottom: 1rem;
+}
+
+h1 {
+    color: #ffeb3b;
+    font-size: 2rem;
+    text-shadow: 1px 1px 2px #000;
+    margin-bottom: 1rem;
+}
+
+.description-box {
+    background-color: rgba(0,0,0,0.05);
+    padding: 1rem;
+    border-radius: 10px;
+    margin-bottom: 2rem;
+    font-size: 1.1rem;
+    line-height: 1.5;
+}
+
+.teams-grid {
+    display: grid;
+    grid-template-columns: repeat(10, 1fr);
+    grid-template-rows: repeat(2, auto);
+    gap: 15px 10px;
+    justify-items: center;
+    align-items: center;
+    max-width: 1000px;
+    margin: 2rem auto 0;
+}
+
+.team-card {
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: 12px;
+    padding: 15px 10px;
+    text-align: center;
+    width: 60px;
+    height: 80px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    box-shadow: 0 3px 6px rgba(0,0,0,0.2);
+}
+
+.team-logo {
+    width: 50px;
+    height: 50px;
+    object-fit: contain;
+    display: block;
+    margin: 0 auto 6px;
+}
+
+.team-name {
+    display: block;
+    font-size: 0.60rem;
+    font-weight: bold;
+    color: white;
+    text-shadow:
+            2px 2px 4px rgba(0,0,0,0.7),
+            -1px -1px 2px rgba(0,0,0,0.4);
+}
