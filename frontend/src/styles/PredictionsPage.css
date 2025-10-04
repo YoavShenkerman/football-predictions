@@ -1,0 +1,109 @@
+body {
+    background-color: #2e7d32;
+    background-image: repeating-linear-gradient(
+            90deg,
+            #2e7d32,
+            #2e7d32 80px,
+            #388e3c 80px,
+            #388e3c 160px
+    );
+    font-family: 'Arial', sans-serif;
+    margin: 0;
+    padding: 0;
+}
+
+.predictions-container {
+    max-width: 600px;
+    margin: 3rem auto;
+    padding: 2rem;
+    background-color: rgba(255, 255, 255, 0.95);
+    border-radius: 15px;
+    box-shadow: 0 6px 20px rgba(0,0,0,0.3);
+    text-align: center;
+    border: 2px solid #fff;
+}
+
+h1 {
+    color: #ffeb3b;
+    text-shadow: 1px 1px 2px #000;
+    margin-bottom: 1rem;
+}
+
+.match-form {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    margin-top: 1rem;
+}
+
+.input-group {
+    display: flex;
+    flex-direction: column;
+    text-align: left;
+}
+
+input, select {
+    padding: 0.5rem;
+    border-radius: 8px;
+    border: 1px solid #ccc;
+    font-size: 1rem;
+    background-color: #ffffffcc;
+}
+
+input:focus, select:focus {
+    outline: none;
+    border-color: #ffeb3b;
+    box-shadow: 0 0 5px #ffeb3b;
+}
+
+.predict-btn {
+    background-color: #ffeb3b;
+    color: #2e7d32;
+    font-weight: bold;
+    padding: 0.6rem;
+    font-size: 1rem;
+    border-radius: 10px;
+    border: 2px solid #2e7d32;
+    cursor: pointer;
+    transition: background-color 0.3s, transform 0.2s;
+}
+
+.predict-btn:hover {
+    background-color: #fff176;
+    transform: translateY(-2px);
+}
+
+.error {
+    color: red;
+    margin-top: 1rem;
+    font-weight: bold;
+}
+
+.prediction-card {
+    margin-top: 1rem;
+    padding: 1rem;
+    border-radius: 12px;
+    font-weight: bold;
+    font-size: 1.3rem;
+    box-shadow: 0 3px 10px rgba(0,0,0,0.3);
+    border: 2px solid #fff;
+    text-shadow: 1px 1px 2px #000;
+}
+
+.prediction-home {
+    background-color: #4caf50;
+    color: #fff;
+    border: 2px solid #2e7d32;
+}
+
+.prediction-away {
+    background-color: #f44336;
+    color: #fff;
+    border: 2px solid #b71c1c;
+}
+
+.prediction-draw {
+    background-color: #ff9800;
+    color: #fff;
+    border: 2px solid #e65100;
+}
